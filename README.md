@@ -57,4 +57,3 @@ python -m http.server 8080
 Open `http://localhost:8080` in your browser.
 
 ---
-*Built with ❤️ for gamers.*
