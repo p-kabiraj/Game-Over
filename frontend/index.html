@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAMEover | Smooth Scroll</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:ital@0;1&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            /* Removed 1000vh so content dictates height */
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+        }
+
+        #animation-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100vh;
+            object-fit: cover;
+        }
+
+        .canvas-overlay {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+        }
+
+        #content-layer {
+            position: relative;
+            z-index: 10;
+        }
+
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .game-card-enter {
+            animation: slideUpFade 0.4s ease-out forwards;
+        }
+        
+        @keyframes slideUpFade {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="selection:bg-teal-500 selection:text-black">
+
+    <div id="animation-container">
+        <canvas id="scroll-canvas"></canvas>
+        <div class="canvas-overlay"></div>
+    </div>
+
+    <div id="content-layer" class="w-full">
+        <!-- Top Header -->
+        <header class="fixed top-0 z-40 w-full bg-transparent px-4 sm:px-8 lg:px-12 py-4 transition-all">
+            <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+                <div class="flex items-center gap-8 lg:gap-12">
+                    <button class="flex items-center gap-3 group cursor-pointer focus:outline-none" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                        <div class="w-6 h-6 sm:w-7 sm:h-7 bg-teal-500 rounded-full flex items-center justify-center shadow-[0_0_12px_rgba(20,184,166,0.4)] group-hover:scale-105 transition-transform">
+                            <span class="w-1.5 h-1.5 bg-black rounded-full"></span>
+                        </div>
+                        <div class="flex items-baseline tracking-tighter">
+                            <span class="text-xl sm:text-2xl font-bold tracking-tighter uppercase text-white font-sans">
+                                GAME<span class="text-teal-400 font-serif italic lowercase font-normal ml-1">over</span>
+                            </span>
+                        </div>
+                    </button>
+                    <nav class="hidden md:flex items-center gap-6 lg:gap-8">
+                        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="text-sm font-medium transition-colors hover:text-teal-400 text-teal-400">Home</button>
+                        <button onclick="document.getElementById('game-library').scrollIntoView({behavior: 'smooth'})" class="text-sm font-medium transition-colors hover:text-teal-400 text-zinc-400">Games</button>
+                        <button class="text-sm font-medium transition-colors hover:text-teal-400 text-zinc-400">Reviews</button>
+                        <button onclick="document.getElementById('price-list').scrollIntoView({behavior: 'smooth'})" class="text-sm font-medium transition-colors hover:text-teal-400 text-zinc-400 uppercase">Time Zone</button>
+                    </nav>
+                </div>
+                <div class="flex items-center gap-3 sm:gap-4">
+                    <button class="p-2 text-zinc-400 hover:text-teal-400 transition-colors hidden sm:block">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    </button>
+                    <div class="h-6 w-px bg-zinc-800 hidden sm:block"></div>
+                    <button class="bg-white text-black px-4 py-2 rounded-full text-sm font-bold hover:bg-teal-400 transition-colors hidden sm:block">
+                        Sign Up
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <main class="w-full max-w-7xl mx-auto flex flex-col pt-[30vh] min-h-[85vh] px-4 sm:px-8 lg:px-12">
+            <div id="hero-banner" class="relative w-full max-w-3xl text-left flex flex-col items-start transition-opacity duration-100 ease-out">
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-[1.15] font-sans text-left max-w-[550px]">
+                    DISCOVER THE NEXT <br />
+                    <span class="font-serif italic font-normal text-teal-400 mt-2 block">
+                        Legendary Game.
+                    </span>
+                </h1>
+                <p class="text-base sm:text-lg md:text-xl text-zinc-400 max-w-[550px] mt-6 leading-relaxed">
+                    Explore a curated collection of masterpieces, track upcoming releases in your time zone, and build your ultimate wishlist.
+                </p>
+                <div class="mt-8 relative w-full sm:hidden">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search text-zinc-500"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    </div>
+                    <input type="text" class="block w-full pl-10 pr-3 py-3 border border-zinc-800 rounded-xl leading-5 bg-zinc-900/50 text-zinc-300 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 sm:text-sm backdrop-blur-sm transition-all" placeholder="Search games..." />
+                </div>
+                <button class="mt-8 sm:mt-10 bg-teal-500 hover:bg-teal-400 text-black px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold flex items-center gap-2 group transition-all transform hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(20,184,166,0.3)]">
+                    Explore Library
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right group-hover:translate-x-1 transition-transform"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </button>
+            </div>
+            
+            <div style="height: 15vh;"></div>
+        </main>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 pb-32 relative z-10">
+            <!-- GAME LIBRARY SECTION -->
+            <section id="game-library" class="w-full mt-10 sm:mt-14 pb-16">
+                <!-- Header & Filters -->
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-zinc-900/80 mb-6">
+                    <div>
+                        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight italic uppercase text-white font-sans">
+                            GAME LIBRARY
+                        </h2>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-xs font-bold font-mono tracking-widest uppercase text-amber-400">ALL GAMES</span>
+                            <span class="text-zinc-600 text-xs font-mono">|</span>
+                            <span id="game-count-label" class="text-zinc-400 text-xs font-mono">0 Titles Available</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center bg-zinc-950 border border-zinc-800 p-0.5 rounded" id="platform-filters">
+                            <button data-filter="all" class="filter-btn px-3 py-1 text-[11px] font-mono uppercase tracking-wider transition-colors cursor-pointer rounded bg-zinc-800 text-teal-400 font-bold">All</button>
+                            <button data-filter="ps5" class="filter-btn px-3 py-1 text-[11px] font-mono uppercase tracking-wider transition-colors cursor-pointer rounded text-zinc-400 hover:text-white">PS5</button>
+                            <button data-filter="pc" class="filter-btn px-3 py-1 text-[11px] font-mono uppercase tracking-wider transition-colors cursor-pointer rounded text-zinc-400 hover:text-white">PC</button>
+                        </div>
+                        
+                        <div class="hidden sm:flex items-center justify-center w-8 h-8 rounded bg-zinc-950 border border-zinc-800 text-zinc-400">
+                            <svg class="w-5 h-5 fill-current opacity-80" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15.5v-7l5 3.5-5 3.5z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Grid -->
+                <div id="games-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+            
+            <!-- PRICE LIST SECTION -->
+            <section id="price-list" class="w-full mt-10">
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-pink-500/10 text-pink-400 border border-pink-500/20 uppercase tracking-widest">
+                                TIME ZONE & PRICING
+                            </span>
+                        </div>
+                        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight uppercase text-white font-sans">
+                            GAME OVER: <span class="text-teal-400 font-serif italic lowercase font-normal">Price List</span>
+                        </h2>
+                    </div>
+                    
+                    <div class="flex items-center gap-3 bg-zinc-950 border border-zinc-800 px-4 py-2 rounded-lg">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>
+                        <div class="text-left">
+                            <p class="text-[11px] font-mono uppercase tracking-wider text-zinc-400">Live Status</p>
+                            <p class="text-xs font-bold font-mono text-emerald-400">OPEN ALL DAY</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="relative rounded-2xl bg-transparent border border-zinc-800/80 p-6 sm:p-8 lg:p-10 shadow-2xl overflow-hidden mt-8">
+                    <div class="absolute -top-24 -left-24 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                    
+                    <div class="text-center pb-8 border-b border-zinc-800/60 relative">
+                        <div class="inline-flex items-center justify-center gap-3 px-6 py-2 rounded-full bg-zinc-900/80 border border-pink-500/30 text-white shadow-[0_0_20px_rgba(236,72,153,0.15)] mb-3">
+                            <span class="text-pink-400 text-lg">⚡</span>
+                            <span class="text-sm sm:text-base font-extrabold tracking-widest uppercase">
+                                GAME OVER: <span class="text-pink-400 font-mono">PRICE LIST</span>
+                            </span>
+                            <span class="text-teal-400 text-lg">✦</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-zinc-400 font-mono max-w-lg mx-auto">
+                            Book play sessions, competitive multiplayer arenas, virtual reality, and zero-gravity relaxation.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8 relative">
+                        <div class="rounded-xl bg-transparent border border-blue-500/30 p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-bl-full pointer-events-none"></div>
+                            <div>
+                                <div class="flex items-center justify-between pb-4 border-b border-zinc-800 mb-4">
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="w-8 h-8 rounded-lg bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-blue-400 text-sm">🎮</div>
+                                        <div>
+                                            <h3 class="text-lg font-bold text-white uppercase tracking-wider font-sans">GAMING ZONES</h3>
+                                            <p class="text-[11px] font-mono text-blue-400">Next-Gen PS5 & Simulation</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">ARCADE</span>
+                                </div>
+                                <div class="grid grid-cols-12 gap-2 text-[11px] font-mono uppercase text-zinc-400 pb-2 border-b border-zinc-800/60 font-semibold">
+                                    <div class="col-span-6">Activity</div>
+                                    <div class="col-span-3 text-center">Duration</div>
+                                    <div class="col-span-3 text-right">Price</div>
+                                </div>
+                                <div class="divide-y divide-zinc-900">
+                                    <div class="grid grid-cols-12 gap-2 py-3 items-center text-xs group hover:bg-zinc-900/40 px-1 rounded transition-colors">
+                                        <div class="col-span-6">
+                                            <span class="font-semibold text-white group-hover:text-blue-300">Car Simulation</span>
+                                            <span class="block text-[10px] text-zinc-500 font-mono">Force feedback racing rig</span>
+                                        </div>
+                                        <div class="col-span-3 text-center font-mono text-zinc-300">15 Minutes</div>
+                                        <div class="col-span-3 text-right"><button onclick="openBookingModal('Car Simulation', '15 Minutes', 50)" class="inline-flex items-center gap-1 font-mono font-bold text-teal-400 bg-zinc-900 hover:bg-teal-900/40 border border-teal-500/30 px-2 py-1 rounded cursor-pointer transition-colors">₹ 50</button></div>
+                                    </div>
+                                    <div class="grid grid-cols-12 gap-2 py-3 items-center text-xs group hover:bg-zinc-900/40 px-1 rounded transition-colors">
+                                        <div class="col-span-6">
+                                            <span class="font-semibold text-white group-hover:text-blue-300">Car Simulation</span>
+                                            <span class="block text-[10px] text-zinc-500 font-mono">Extended endurance track</span>
+                                        </div>
+                                        <div class="col-span-3 text-center font-mono text-zinc-300">30 Minutes</div>
+                                        <div class="col-span-3 text-right"><button onclick="openBookingModal('Car Simulation', '30 Minutes', 80)" class="inline-flex items-center gap-1 font-mono font-bold text-teal-400 bg-zinc-900 hover:bg-teal-900/40 border border-teal-500/30 px-2 py-1 rounded cursor-pointer transition-colors">₹ 80</button></div>
+                                    </div>
+                                    <div class="grid grid-cols-12 gap-2 py-3 items-center text-xs group hover:bg-zinc-900/40 px-1 rounded transition-colors">
+                                        <div class="col-span-6">
+                                            <span class="font-semibold text-white group-hover:text-blue-300">PlayStation</span>
+                                            <span class="block text-[10px] text-zinc-400 font-mono">(Single Player)</span>
+                                        </div>
+                                        <div class="col-span-3 text-center font-mono text-zinc-300">30 Minutes</div>
+                                        <div class="col-span-3 text-right"><button onclick="openBookingModal('PlayStation', '30 Minutes', 70)" class="inline-flex items-center gap-1 font-mono font-bold text-teal-400 bg-zinc-900 hover:bg-teal-900/40 border border-teal-500/30 px-2 py-1 rounded cursor-pointer transition-colors">₹ 70</button></div>
+                                    </div>
+                                    <div class="grid grid-cols-12 gap-2 py-3 items-center text-xs group hover:bg-zinc-900/40 px-1 rounded transition-colors">
+                                        <div class="col-span-6">
+                                            <span class="font-semibold text-white group-hover:text-blue-300">Virtual Reality (VR)</span>
+                                            <span class="block text-[10px] text-zinc-500 font-mono">Immersive headset sessions</span>
+                                        </div>
+                                        <div class="col-span-3 text-center font-mono text-zinc-300">15 Minutes</div>
+                                        <div class="col-span-3 text-right"><button onclick="openBookingModal('Virtual Reality (VR)', '15 Minutes', 150)" class="inline-flex items-center gap-1 font-mono font-bold text-teal-400 bg-zinc-900 hover:bg-teal-900/40 border border-teal-500/30 px-2 py-1 rounded cursor-pointer transition-colors">₹ 150</button></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="rounded-xl bg-transparent border border-emerald-500/30 p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-bl-full pointer-events-none"></div>
+                            <div>
+                                <div class="flex items-center justify-between pb-4 border-b border-zinc-800 mb-4">
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-sm">💆</div>
+                                        <div>
+                                            <h3 class="text-lg font-bold text-white uppercase tracking-wider font-sans">RELAXATION ZONE</h3>
+                                            <p class="text-[11px] font-mono text-emerald-400">Zero Gravity Chairs</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">WELLNESS</span>
+                                </div>
+                                <div class="grid grid-cols-12 gap-2 text-[11px] font-mono uppercase text-zinc-400 pb-2 border-b border-zinc-800/60 font-semibold">
+                                    <div class="col-span-6">Service</div>
+                                    <div class="col-span-3 text-center">Duration</div>
+                                    <div class="col-span-3 text-right">Price</div>
+                                </div>
+                                <div class="divide-y divide-zinc-900">
+                                    <div class="grid grid-cols-12 gap-2 py-3 items-center text-xs group hover:bg-zinc-900/40 px-1 rounded transition-colors">
+                                        <div class="col-span-6">
+                                            <span class="font-semibold text-white group-hover:text-emerald-300">Massage Chair</span>
+                                            <span class="block text-[10px] text-zinc-500 font-mono">Quick muscle relief</span>
+                                        </div>
+                                        <div class="col-span-3 text-center font-mono text-zinc-300">10 Minutes</div>
+                                        <div class="col-span-3 text-right"><button onclick="openBookingModal('Massage Chair', '10 Minutes', 40)" class="inline-flex items-center gap-1 font-mono font-bold text-teal-400 bg-zinc-900 hover:bg-teal-900/40 border border-teal-500/30 px-2 py-1 rounded cursor-pointer transition-colors">₹ 40</button></div>
+                                    </div>
+                                    <div class="grid grid-cols-12 gap-2 py-3 items-center text-xs group hover:bg-zinc-900/40 px-1 rounded transition-colors">
+                                        <div class="col-span-6">
+                                            <span class="font-semibold text-white group-hover:text-emerald-300">Massage Chair</span>
+                                            <span class="block text-[10px] text-zinc-500 font-mono">Standard relaxation</span>
+                                        </div>
+                                        <div class="col-span-3 text-center font-mono text-zinc-300">15 Minutes</div>
+                                        <div class="col-span-3 text-right"><button onclick="openBookingModal('Massage Chair', '15 Minutes', 70)" class="inline-flex items-center gap-1 font-mono font-bold text-teal-400 bg-zinc-900 hover:bg-teal-900/40 border border-teal-500/30 px-2 py-1 rounded cursor-pointer transition-colors">₹ 70</button></div>
+                                    </div>
+                                    <div class="grid grid-cols-12 gap-2 py-3 items-center text-xs group hover:bg-zinc-900/40 px-1 rounded transition-colors">
+                                        <div class="col-span-6">
+                                            <span class="font-semibold text-white group-hover:text-emerald-300">Massage Chair</span>
+                                            <span class="block text-[10px] text-zinc-500 font-mono">Extended therapeutic</span>
+                                        </div>
+                                        <div class="col-span-3 text-center font-mono text-zinc-300">25 Minutes</div>
+                                        <div class="col-span-3 text-right"><button onclick="openBookingModal('Massage Chair', '25 Minutes', 100)" class="inline-flex items-center gap-1 font-mono font-bold text-teal-400 bg-zinc-900 hover:bg-teal-900/40 border border-teal-500/30 px-2 py-1 rounded cursor-pointer transition-colors">₹ 100</button></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Scroll & Animation Logic -->
+    <script>
+        let GAMES_DATA = [];
+
+        const fetchGamesData = async () => {
+            try {
+                const response = await fetch('http://localhost:3000/api/games');
+                GAMES_DATA = await response.json();
+                renderGames();
+            } catch (error) {
+                console.error("Failed to fetch games data:", error);
+            }
+        };
+
+        let currentFilter = 'all';
+
+        const renderGames = () => {
+            const grid = document.getElementById('games-grid');
+            const countLabel = document.getElementById('game-count-label');
+            grid.innerHTML = '';
+            
+            const filteredGames = GAMES_DATA.filter(game => {
+                if (currentFilter === 'all') return true;
+                return game.platforms.some(p => p.toLowerCase() === currentFilter.toLowerCase());
+            });
+
+            countLabel.textContent = `${filteredGames.length} ${filteredGames.length === 1 ? 'Title' : 'Titles'} Available`;
+
+            filteredGames.forEach((game, index) => {
+                const isSelected = game.isSelected;
+                const borderClass = isSelected 
+                    ? 'border-amber-400/90 shadow-[0_0_18px_rgba(251,191,36,0.22)] bg-zinc-900/90' 
+                    : 'border-zinc-800/80 hover:border-zinc-700 bg-zinc-950/90 hover:bg-zinc-900/90';
+                const textClass = isSelected ? 'text-amber-200' : 'text-zinc-100 group-hover:text-white';
+                
+                const platformsHtml = game.platforms.map(p => 
+                    `<span class="inline-flex items-center px-1.5 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider bg-zinc-900 border border-zinc-700/80 text-zinc-300 rounded">${p}</span>`
+                ).join('');
+
+                const html = `
+                    <div class="game-card-enter group relative flex items-center gap-3.5 p-2.5 transition-all duration-150 cursor-pointer select-none rounded border ${borderClass}" style="animation-delay: ${index * 50}ms">
+                        <div class="relative w-14 h-14 sm:w-16 sm:h-16 shrink-0 bg-black overflow-hidden rounded border border-zinc-800">
+                            <img src="${game.coverImage}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                            ${game.isHot ? '<div class="absolute top-0 right-0 w-2 h-2 bg-amber-400 rounded-bl"></div>' : ''}
+                        </div>
+                        <div class="flex-1 min-w-0 pr-2">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-sm sm:text-base font-bold tracking-tight truncate font-sans ${textClass}">
+                                    ${game.gameNumber}. ${game.title}
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-1.5 mt-1.5">
+                                ${platformsHtml}
+                                <span class="text-[10px] text-zinc-500 font-mono hidden sm:inline-block truncate">${game.genre}</span>
+                            </div>
+                        </div>
+                        <div class="shrink-0 pr-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="text-teal-400 font-mono text-xs">➔</span>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', html);
+            });
+        };
+
+        // Filter Logic
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Reset styles
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.className = "filter-btn px-3 py-1 text-[11px] font-mono uppercase tracking-wider transition-colors cursor-pointer rounded text-zinc-400 hover:text-white";
+                });
+                // Set active style
+                e.target.className = "filter-btn px-3 py-1 text-[11px] font-mono uppercase tracking-wider transition-colors cursor-pointer rounded bg-zinc-800 text-teal-400 font-bold";
+                
+                currentFilter = e.target.getAttribute('data-filter');
+                renderGames();
+            });
+        });
+
+        // Initialize Games
+        fetchGamesData();
+
+        // SCROLL ANIMATION LOGIC
+        const canvas = document.getElementById('scroll-canvas');
+        const context = canvas.getContext('2d');
+        const heroBanner = document.getElementById('hero-banner');
+        const frameCount = 240;
+        
+        const currentFrame = index => (
+            `ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`
+        );
+
+        const images = [];
+        const preloadImages = () => {
+            for (let i = 0; i < frameCount; i++) {
+                images[i] = new Image();
+                images[i].src = currentFrame(i);
+            }
+        };
+
+        const resizeCanvas = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            renderCanvas();
+        };
+
+        const renderCanvas = (frameIndex = 0) => {
+            const img = images[frameIndex];
+            if (!img || !img.complete) return;
+            
+            const canvasRatio = canvas.width / canvas.height;
+            const imgRatio = img.width / img.height;
+            
+            let drawWidth = canvas.width;
+            let drawHeight = canvas.height;
+            let offsetX = 0;
+            let offsetY = 0;
+            
+            if (canvasRatio > imgRatio) {
+                drawHeight = canvas.width / imgRatio;
+                offsetY = (canvas.height - drawHeight) / 2;
+            } else {
+                drawWidth = canvas.height * imgRatio;
+                offsetX = (canvas.width - drawWidth) / 2;
+            }
+            
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+        }
+
+        const firstImg = new Image();
+        firstImg.src = currentFrame(0);
+        
+        firstImg.onload = function() {
+            images[0] = firstImg;
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+        }
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop;
+            const maxScrollTop = document.documentElement.scrollHeight - window.innerHeight;
+            
+            if (maxScrollTop <= 0) return;
+
+            const scrollFraction = scrollTop / maxScrollTop;
+            
+            const frameIndex = Math.min(
+                frameCount - 1,
+                Math.max(0, Math.ceil(scrollFraction * frameCount) - 1)
+            );
+
+            // Sync Hero Banner fade out based on viewport height (pixels) rather than absolute document %
+            // Fade out over the first 400px of scrolling
+            let opacity = 1 - (scrollTop / 400);
+            if (opacity < 0) opacity = 0;
+            
+            let yTransform = (scrollTop / 400) * -50;
+            if (scrollTop > 400) yTransform = -50;
+
+            requestAnimationFrame(() => {
+                if (images[frameIndex] && images[frameIndex].complete) {
+                    renderCanvas(frameIndex);
+                }
+                
+                heroBanner.style.opacity = opacity;
+                heroBanner.style.transform = `translateY(${yTransform}%)`;
+                
+                if (opacity <= 0) {
+                    heroBanner.style.pointerEvents = 'none';
+                } else {
+                    heroBanner.style.pointerEvents = 'auto';
+                }
+            });
+        });
+
+        preloadImages();
+    </script>
+    <!-- BOOKING SYSTEM OVERLAY -->
+    <div id="booking-modal-container" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div id="booking-modal-box" class="w-full max-w-md bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden transform scale-95 opacity-0 transition-all duration-300 flex flex-col max-h-[90vh]">
+            <!-- Header -->
+            <div class="px-6 py-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/50">
+                <h3 class="text-lg font-bold text-white uppercase tracking-wider font-sans flex items-center gap-2">
+                    <span class="text-teal-400">⚡</span> Booking
+                </h3>
+                <button onclick="closeBookingModal()" class="text-zinc-400 hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+            
+            <!-- Content Area -->
+            <div class="p-6 overflow-y-auto flex-1 scrollbar-hide" id="booking-content">
+                <!-- Step 1: Time Selection -->
+                <div id="booking-step-1" class="block">
+                    <div class="mb-6 text-center">
+                        <h4 id="bm-activity-name" class="text-xl font-bold text-white">Activity</h4>
+                        <p class="text-sm text-zinc-400 font-mono mt-1"><span id="bm-duration">0 Min</span> • <span id="bm-price" class="text-teal-400 font-bold">₹0</span></p>
+                    </div>
+                    
+                    <h5 class="text-xs uppercase font-bold tracking-widest text-zinc-500 mb-3">Available Time Slots</h5>
+                    <div id="bm-time-slots" class="grid grid-cols-3 gap-3">
+                        <!-- Slots injected via JS -->
+                    </div>
+                    
+                    <button id="btn-proceed-payment" disabled onclick="goToPayment()" class="w-full mt-8 py-3 rounded-xl bg-teal-500 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:cursor-not-allowed text-black font-bold uppercase tracking-wider hover:bg-teal-400 transition-colors">
+                        Proceed to Payment
+                    </button>
+                </div>
+                
+                <!-- Step 2: Payment -->
+                <div id="booking-step-2" class="hidden">
+                    <div class="text-center mb-6">
+                        <h4 class="text-lg font-bold text-white">Complete Payment</h4>
+                        <p class="text-sm text-zinc-400 mt-1">Scan the QR code to pay <span id="pm-amount" class="text-teal-400 font-bold">₹0</span></p>
+                    </div>
+                    <div class="w-48 h-48 mx-auto bg-white rounded-xl p-2 mb-6 shadow-[0_0_20px_rgba(20,184,166,0.15)] flex items-center justify-center">
+                        <div class="w-full h-full border-4 border-black border-dashed flex items-center justify-center">
+                            <span class="text-black font-bold text-xs uppercase text-center">Mock<br>QR Code</span>
+                        </div>
+                    </div>
+                    <button onclick="simulatePayment()" id="btn-simulate-pay" class="w-full py-3 rounded-xl bg-teal-500 text-black font-bold uppercase tracking-wider hover:bg-teal-400 transition-colors">
+                        Confirm Payment
+                    </button>
+                    <button onclick="goToTimeSelection()" class="w-full mt-3 py-3 rounded-xl bg-transparent border border-zinc-700 text-zinc-300 font-bold uppercase tracking-wider hover:bg-zinc-800 transition-colors text-xs">
+                        Back
+                    </button>
+                </div>
+                
+                <!-- Step 3: Confirmation -->
+                <div id="booking-step-3" class="hidden text-center py-6">
+                    <div class="w-16 h-16 mx-auto bg-teal-500/20 text-teal-400 rounded-full flex items-center justify-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                    </div>
+                    <h4 class="text-2xl font-bold text-white mb-2">Booking Confirmed!</h4>
+                    <p class="text-sm text-zinc-400 mb-6">Your slot has been successfully reserved.</p>
+                    
+                    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 mb-8">
+                        <p class="text-xs uppercase text-zinc-500 font-bold tracking-widest mb-1">Queue Number</p>
+                        <p id="cm-queue-number" class="text-3xl font-mono font-bold text-pink-400 mb-4">Q-000</p>
+                        <div class="flex justify-between text-xs text-zinc-300 font-mono">
+                            <span id="cm-activity">Activity</span>
+                            <span id="cm-time" class="text-teal-400">00:00</span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="closeBookingModal()" class="w-full py-3 rounded-xl bg-zinc-800 text-white font-bold uppercase tracking-wider hover:bg-zinc-700 transition-colors">
+                        Close & Return
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking System Script -->
+    <script>
+        // Booking System State
+        const BookingState = {
+            currentActivity: '',
+            currentDuration: '',
+            currentPrice: 0,
+            selectedTime: null,
+            // Mock store for generated slots to keep them persistent per activity
+            activitySlots: {} 
+        };
+
+        // DOM Elements
+        const modalContainer = document.getElementById('booking-modal-container');
+        const modalBox = document.getElementById('booking-modal-box');
+        const step1 = document.getElementById('booking-step-1');
+        const step2 = document.getElementById('booking-step-2');
+        const step3 = document.getElementById('booking-step-3');
+        const timeSlotsContainer = document.getElementById('bm-time-slots');
+        const btnProceed = document.getElementById('btn-proceed-payment');
+
+        // Initialize Booking Flow
+        window.openBookingModal = (activity, duration, price) => {
+            BookingState.currentActivity = activity;
+            BookingState.currentDuration = duration;
+            BookingState.currentPrice = price;
+            BookingState.selectedTime = null;
+
+            // Populate text
+            document.getElementById('bm-activity-name').innerText = activity;
+            document.getElementById('bm-duration').innerText = duration;
+            document.getElementById('bm-price').innerText = '₹' + price;
+            
+            generateTimeSlots(activity, duration);
+            
+            // Reset UI
+            goToTimeSelection();
+            
+            // Show modal
+            modalContainer.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                modalBox.classList.remove('scale-95', 'opacity-0');
+            }, 10);
+            
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeBookingModal = () => {
+            modalBox.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modalContainer.classList.add('opacity-0', 'pointer-events-none');
+                document.body.style.overflow = '';
+            }, 300);
+        };
+
+        const generateTimeSlots = (activity, durationStr) => {
+            timeSlotsContainer.innerHTML = '';
+            btnProceed.disabled = true;
+            
+            // Generate mock slots if not already cached for this activity
+            if (!BookingState.activitySlots[activity]) {
+                const slots = [];
+                // Parse duration number
+                const durationMins = parseInt(durationStr.split(' ')[0]) || 15;
+                let startHour = 10; // 10 AM
+                let startMin = 0;
+                
+                // Generate 6 random upcoming slots
+                for(let i=0; i<6; i++) {
+                    const period = startHour >= 12 ? 'PM' : 'AM';
+                    const displayHour = startHour > 12 ? startHour - 12 : startHour;
+                    const displayMin = startMin === 0 ? '00' : startMin;
+                    
+                    const timeString = `${displayHour}:${displayMin} ${period}`;
+                    const isBooked = Math.random() > 0.7; // 30% chance a slot is already booked
+                    
+                    slots.push({ time: timeString, booked: isBooked });
+                    
+                    startMin += durationMins;
+                    if(startMin >= 60) {
+                        startHour++;
+                        startMin -= 60;
+                    }
+                }
+                BookingState.activitySlots[activity] = slots;
+            }
+
+            // Render slots
+            BookingState.activitySlots[activity].forEach((slot, index) => {
+                const btn = document.createElement('button');
+                btn.className = `py-2 px-1 rounded-lg border text-xs font-mono font-bold transition-all ${
+                    slot.booked 
+                    ? 'border-zinc-800 bg-zinc-900/50 text-zinc-600 cursor-not-allowed' 
+                    : 'border-zinc-700 bg-zinc-900 text-zinc-300 hover:border-teal-500/50 hover:bg-teal-900/20'
+                }`;
+                btn.innerText = slot.time;
+                
+                if(!slot.booked) {
+                    btn.onclick = () => selectTimeSlot(btn, slot.time);
+                }
+                timeSlotsContainer.appendChild(btn);
+            });
+        };
+
+        const selectTimeSlot = (btnElement, time) => {
+            // Deselect others
+            Array.from(timeSlotsContainer.children).forEach(el => {
+                if(!el.classList.contains('cursor-not-allowed')) {
+                    el.classList.remove('border-teal-400', 'bg-teal-900/40', 'text-teal-400');
+                    el.classList.add('border-zinc-700', 'bg-zinc-900', 'text-zinc-300');
+                }
+            });
+            
+            // Select current
+            btnElement.classList.remove('border-zinc-700', 'bg-zinc-900', 'text-zinc-300');
+            btnElement.classList.add('border-teal-400', 'bg-teal-900/40', 'text-teal-400');
+            
+            BookingState.selectedTime = time;
+            btnProceed.disabled = false;
+        };
+
+        window.goToTimeSelection = () => {
+            step1.classList.remove('hidden');
+            step2.classList.add('hidden');
+            step3.classList.add('hidden');
+        };
+
+        window.goToPayment = () => {
+            document.getElementById('pm-amount').innerText = '₹' + BookingState.currentPrice;
+            step1.classList.add('hidden');
+            step2.classList.remove('hidden');
+        };
+
+        window.simulatePayment = () => {
+            const btn = document.getElementById('btn-simulate-pay');
+            btn.innerHTML = '<span class="animate-pulse">Processing...</span>';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                // Success!
+                btn.innerHTML = 'Confirm Payment';
+                btn.disabled = false;
+                
+                // Mark slot as booked in our mock cache
+                const slots = BookingState.activitySlots[BookingState.currentActivity];
+                const slotIndex = slots.findIndex(s => s.time === BookingState.selectedTime);
+                if(slotIndex > -1) slots[slotIndex].booked = true;
+                
+                showConfirmation();
+            }, 1500);
+        };
+
+        window.showConfirmation = () => {
+            step2.classList.add('hidden');
+            step3.classList.remove('hidden');
+            
+            // Generate Random Queue Number
+            const queueNum = Math.floor(Math.random() * 900) + 100;
+            document.getElementById('cm-queue-number').innerText = `Q-${queueNum}`;
+            document.getElementById('cm-activity').innerText = BookingState.currentActivity;
+            document.getElementById('cm-time').innerText = BookingState.selectedTime;
+        };
+    </script>
+</body>
+</html>

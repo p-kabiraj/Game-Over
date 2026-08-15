@@ -1,0 +1,9 @@
+{
+  "name": "game-over-api",
+  "version": "1.0.0",
+  "description": "Backend API for Game Over",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
