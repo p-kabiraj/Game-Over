@@ -323,7 +323,7 @@
 
         const fetchGamesData = async () => {
             try {
-                const response = await fetch('http://localhost:3000/api/games');
+                const response = await fetch('/api/games');
                 GAMES_DATA = await response.json();
                 renderGames();
             } catch (error) {
